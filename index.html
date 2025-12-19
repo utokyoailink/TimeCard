@@ -76,31 +76,61 @@
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyKMSSVhWnQXj7Uv5_DiSRWe7bbmA5bL7XaMEhNpdh6CUl-nzKKjRTLJXzb8dSrgI4e/exec";
         // ▲▲▲ 書き換えここまで ▲▲▲
 
+    // ▼▼▼ 追加：オフィスの設定（ステップ1で調べた数値をここに入れる） ▼▼▼
+        const OFFICE_LAT = 35.681234;  // オフィスの緯度
+        const OFFICE_LON = 139.767123; // オフィスの経度
+        const ALLOWED_DISTANCE = 50;   // 許容する半径（メートル）※GPS誤差を考慮して50m〜100m推奨
+    
+        // 2点間の距離を計算する関数（ハーバースイン公式）
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // 地球の半径（メートル）
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // 距離（メートル）
+        }
+    
         function sendData(type) {
             const statusEl = document.getElementById("status");
             statusEl.innerText = "位置情報を取得中...";
-
+            statusEl.style.color = "blue";
+    
             if (!navigator.geolocation) {
                 alert("この端末では位置情報が使えません");
                 return;
             }
-
+    
             navigator.geolocation.getCurrentPosition((position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
+                const currentLat = position.coords.latitude;
+                const currentLon = position.coords.longitude;
+                
+                // ▼▼▼ 追加：距離判定ロジック ▼▼▼
+                const distance = getDistance(currentLat, currentLon, OFFICE_LAT, OFFICE_LON);
+                console.log("オフィスまでの距離: " + Math.round(distance) + "m");
+    
+                // 許容範囲を超えていたら送信せずに終了
+                if (distance > ALLOWED_DISTANCE) {
+                    statusEl.innerText = `オフィスから離れすぎています（距離:約${Math.round(distance)}m）`;
+                    statusEl.style.color = "red";
+                    alert(`オフィス周辺（半径${ALLOWED_DISTANCE}m以内）から打刻してください。\n現在地からの距離: 約${Math.round(distance)}m`);
+                    return; // ここで処理を中断
+                }
+                // ▲▲▲ 追加ここまで ▲▲▲
+    
+                // ここから下は前回と同じ（送信処理）
                 const user = window.currentUser;
-
                 statusEl.innerText = "送信中...";
-
+    
                 const payload = {
                     name: user.displayName,
                     email: user.email,
                     type: type,
-                    lat: lat,
-                    lon: lon
+                    lat: currentLat,
+                    lon: currentLon
                 };
-
-                // GASへ送信（no-corsモードで送信）
+    
                 fetch(GAS_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -113,12 +143,12 @@
                     statusEl.innerText = "送信エラー";
                     console.error(err);
                 });
-
+    
             }, (error) => {
                 statusEl.innerText = "位置情報の取得に失敗しました";
                 alert("位置情報の利用を許可してください");
             });
         }
-    </script>
+        </script>
 </body>
 </html>
