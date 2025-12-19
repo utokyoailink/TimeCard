@@ -2,166 +2,166 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Smart TimeCard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap" rel="stylesheet">
     <style>
-        /* --- Base Styles --- */
+        /* --- Base Layout --- */
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
+            /* 背景グラデーション */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             height: 100vh;
+            height: 100dvh; /* モバイルブラウザのアドレスバー対策 */
             display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #333;
-            /* ベースの文字サイズを少し大きく設定 */
-            font-size: 16px;
+            flex-direction: column;
+            overflow: hidden; /* スクロール禁止 */
+            color: white;
         }
 
-        /* --- Card Container --- */
-        .card {
-            background: rgba(255, 255, 255, 0.96);
-            /* スマホで画面幅を有効活用する設定 */
-            width: 92%; 
-            max-width: 450px;
-            padding: 40px 20px;
-            border-radius: 28px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        /* --- Upper Area (Clock) --- */
+        .clock-container {
+            flex: 1; /* 画面の残りスペースをすべて使う */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            box-sizing: border-box; /* パディングを含めた幅計算 */
+            padding-top: 20px;
         }
 
         h1 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-            color: #666;
-            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            opacity: 0.8;
+            margin: 0;
             text-transform: uppercase;
         }
 
-        /* --- Clock (巨大化) --- */
-        #liveClock {
-            /* 画面幅に応じてサイズが変わる設定 */
-            font-size: 16vw; 
-            max-font-size: 4rem;
-            font-weight: 700;
-            color: #2d3436;
-            margin: 10px 0 20px 0;
-            line-height: 1;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -2px;
-        }
-        /* PCなどで大きくなりすぎないように制限 */
-        @media (min-width: 500px) {
-            #liveClock { font-size: 4.5rem; }
-        }
-
         #currentDate {
-            font-size: 1.1rem;
-            color: #888;
-            margin-bottom: 5px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 5px;
             font-weight: 500;
         }
 
-        /* --- User Info --- */
+        #liveClock {
+            /* 画面幅の22%という超巨大サイズ */
+            font-size: 22vw; 
+            font-weight: 800;
+            line-height: 1;
+            margin: 10px 0;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* --- Lower Area (Control Panel) --- */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 40px 40px 0 0;
+            padding: 40px 30px;
+            padding-bottom: max(40px, env(safe-area-inset-bottom)); /* iPhone下部のバー対策 */
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
         #userInfo {
-            margin-bottom: 30px;
-            font-size: 1rem;
-            color: #555;
-            background: #f1f3f6;
-            padding: 10px 20px;
-            border-radius: 30px;
-            display: inline-block;
+            text-align: center;
+            color: #666;
             font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
         /* --- Buttons --- */
+        /* 縦並びにして押しやすくする */
         .btn-group {
             display: flex;
+            flex-direction: column; 
             gap: 15px;
-            justify-content: center;
+            width: 100%;
         }
 
         button {
             border: none;
             border-radius: 20px;
-            padding: 22px 10px; /* 上下の余白を増やして押しやすく */
-            font-size: 1.3rem;  /* 文字を大きく */
-            font-weight: bold;
+            padding: 24px;
+            font-size: 1.5rem; /* 文字サイズ特大 */
+            font-weight: 800;
             cursor: pointer;
-            transition: transform 0.1s ease;
             width: 100%;
+            transition: transform 0.1s;
             -webkit-tap-highlight-color: transparent;
-            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
 
         button:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
         }
 
         /* Google Login Button */
         .btn-google {
-            background: #fff;
-            color: #444;
-            border: 2px solid #eee;
+            background: #f8f9fa;
+            color: #3c4043;
+            border: 1px solid #dadce0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            width: 100%;
-            font-size: 1.1rem;
-            padding: 20px;
+            gap: 15px;
+            font-size: 1.2rem;
         }
 
         /* Action Buttons */
         .btn-in {
             background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
             color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+        
         .btn-out {
             background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
             color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            filter: grayscale(100%);
-        }
-
-        /* --- Utils --- */
+        /* --- Utilities --- */
         .hidden { display: none !important; }
-        
-        /* --- Toast Notification (見やすく) --- */
+
+        /* Toast */
         #toast {
             visibility: hidden;
-            width: 80%; /* 幅を広げる */
-            min-width: 250px;
-            background-color: rgba(40, 40, 40, 0.95);
+            width: 80%;
+            background-color: #333;
             color: #fff;
             text-align: center;
             border-radius: 50px;
-            padding: 18px 20px;
+            padding: 16px;
             position: fixed;
             z-index: 100;
             left: 50%;
-            bottom: 40px;
+            top: 20px; /* 下ではなく上に表示 */
             transform: translateX(-50%);
             font-size: 1rem;
             font-weight: bold;
             opacity: 0;
             transition: all 0.3s;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         #toast.show {
             visibility: visible;
             opacity: 1;
-            bottom: 60px; /* 少し上に浮き上がるアニメーション */
+            top: 40px;
         }
         #toast.error { background-color: #e74c3c; }
         #toast.success { background-color: #2ecc71; }
@@ -170,13 +170,16 @@
 </head>
 <body>
 
-    <div class="card">
+    <div class="clock-container">
         <h1>Attendance</h1>
-        <div id="currentDate">--/-- (Sun)</div>
+        <div id="currentDate">12/19 (Fri)</div>
         <div id="liveClock">00:00</div>
+    </div>
 
+    <div class="control-panel">
+        
         <div id="loginSection">
-            <p style="color:#666; margin-bottom:20px; font-size:1.1rem;">社員認証を行ってください</p>
+            <div id="userInfo">社員認証</div>
             <button class="btn-google" onclick="login()">
                 <svg width="24" height="24" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.716H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.272C4.672 5.14 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
                 Googleでログイン
@@ -192,13 +195,12 @@
         </div>
     </div>
 
-    <div id="toast">Message Here</div>
+    <div id="toast">Message</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // あなたのFirebase設定
         const firebaseConfig = {
           apiKey: "AIzaSyDxeWz_xvG-Ey0L8-kRFpESAtis72Bz-Ck",
           authDomain: "timecardapp-57696.firebaseapp.com",
@@ -214,12 +216,8 @@
 
         window.login = () => {
             signInWithPopup(auth, provider)
-                .then((result) => {
-                    showToast("ログインしました", "success");
-                }).catch((error) => {
-                    console.error(error);
-                    showToast("ログイン失敗: " + error.message, "error");
-                });
+                .then((result) => showToast("ログイン成功", "success"))
+                .catch((error) => showToast("Error: " + error.message, "error"));
         };
 
         onAuthStateChanged(auth, (user) => {
@@ -233,27 +231,21 @@
     </script>
 
     <script>
-        // あなたのGAS URL
         const GAS_URL = "https://script.google.com/macros/s/AKfycbyKMSSVhWnQXj7Uv5_DiSRWe7bbmA5bL7XaMEhNpdh6CUl-nzKKjRTLJXzb8dSrgI4e/exec";
-
-        // オフィス設定
         const OFFICE_LAT = 35.71516;  
         const OFFICE_LON = 139.762; 
         const ALLOWED_DISTANCE = 200;   
 
-        // 時計機能
         function updateClock() {
             const now = new Date();
-            // 秒数表示を削除してシンプルに見やすく（お好みで秒も戻せます）
             const timeString = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-            const dateString = now.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
+            const dateString = now.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', weekday: 'short' });
             document.getElementById('liveClock').innerText = timeString;
             document.getElementById('currentDate').innerText = dateString;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // 距離計算
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371000; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -264,76 +256,63 @@
             return R * c; 
         }
 
-        // トースト通知を表示する関数
         function showToast(message, type = "normal") {
             const toast = document.getElementById("toast");
             toast.innerText = message;
-            toast.className = "show"; // リセット
+            toast.className = "show";
             if(type === "error") toast.classList.add("error");
             if(type === "success") toast.classList.add("success");
-            
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
         function sendData(type) {
             if (!navigator.geolocation) {
-                showToast("端末の位置情報が使えません", "error");
+                showToast("位置情報がOFFです", "error");
                 return;
             }
-
-            // ボタンを一時無効化（連打防止）
+            
             const buttons = document.querySelectorAll('button');
-            buttons.forEach(btn => btn.disabled = true);
-            showToast("位置情報を確認中...", "normal");
+            buttons.forEach(btn => btn.style.transform = "scale(0.95)"); // 押した感演出
+
+            showToast("位置測位中...", "normal");
 
             navigator.geolocation.getCurrentPosition((position) => {
                 const currentLat = position.coords.latitude;
                 const currentLon = position.coords.longitude;
-                
                 const distance = getDistance(currentLat, currentLon, OFFICE_LAT, OFFICE_LON);
-                console.log("距離: " + Math.round(distance) + "m");
-
-                // 範囲外チェック
+                
                 if (distance > ALLOWED_DISTANCE) {
-                    showToast(`エリア外です（オフィスから${Math.round(distance)}m）`, "error");
-                    buttons.forEach(btn => btn.disabled = false);
+                    showToast(`エリア外です (${Math.round(distance)}m)`, "error");
+                    buttons.forEach(btn => btn.style.transform = "scale(1)");
                     return; 
                 }
 
-                showToast("データを送信中...", "normal");
+                showToast("送信中...", "normal");
                 const user = window.currentUser;
-
-                const payload = {
-                    name: user.displayName,
-                    email: user.email,
-                    type: type,
-                    lat: currentLat,
-                    lon: currentLon
-                };
-
+                
                 fetch(GAS_URL, {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        name: user.displayName,
+                        email: user.email,
+                        type: type,
+                        lat: currentLat,
+                        lon: currentLon
+                    })
                 }).then(() => {
-                    showToast(`${type}完了！お疲れ様です`, "success");
-                    // 3秒後にボタン復活
-                    setTimeout(() => buttons.forEach(btn => btn.disabled = false), 3000);
+                    showToast(`${type}完了しました`, "success");
+                    buttons.forEach(btn => btn.style.transform = "scale(1)");
                 }).catch((err) => {
-                    showToast("送信エラーが発生しました", "error");
-                    console.error(err);
-                    buttons.forEach(btn => btn.disabled = false);
+                    showToast("送信失敗", "error");
+                    buttons.forEach(btn => btn.style.transform = "scale(1)");
                 });
 
             }, (error) => {
-                showToast("位置情報が取得できませんでした", "error");
-                buttons.forEach(btn => btn.disabled = false);
-            }, {
-                enableHighAccuracy: true, // 高精度モード
-                timeout: 10000,
-                maximumAge: 0
-            });
+                showToast("位置情報エラー", "error");
+                buttons.forEach(btn => btn.style.transform = "scale(1)");
+            }, { enableHighAccuracy: true, timeout: 5000 });
         }
     </script>
 </body>
