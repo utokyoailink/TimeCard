@@ -17,52 +17,65 @@
             justify-content: center;
             align-items: center;
             color: #333;
+            /* ベースの文字サイズを少し大きく設定 */
+            font-size: 16px;
         }
 
         /* --- Card Container --- */
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            width: 90%;
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.96);
+            /* スマホで画面幅を有効活用する設定 */
+            width: 92%; 
+            max-width: 450px;
             padding: 40px 20px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 28px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
             text-align: center;
-            transition: transform 0.3s ease;
+            box-sizing: border-box; /* パディングを含めた幅計算 */
         }
 
         h1 {
             margin: 0 0 10px 0;
-            font-size: 1.2rem;
-            color: #555;
-            letter-spacing: 0.05em;
+            font-size: 1.1rem;
+            color: #666;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
         }
 
-        /* --- Clock --- */
+        /* --- Clock (巨大化) --- */
         #liveClock {
-            font-size: 3rem;
+            /* 画面幅に応じてサイズが変わる設定 */
+            font-size: 16vw; 
+            max-font-size: 4rem;
             font-weight: 700;
-            color: #333;
-            margin: 10px 0 30px 0;
+            color: #2d3436;
+            margin: 10px 0 20px 0;
+            line-height: 1;
             font-variant-numeric: tabular-nums;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
         }
+        /* PCなどで大きくなりすぎないように制限 */
+        @media (min-width: 500px) {
+            #liveClock { font-size: 4.5rem; }
+        }
+
         #currentDate {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #888;
             margin-bottom: 5px;
+            font-weight: 500;
         }
 
         /* --- User Info --- */
         #userInfo {
-            margin-bottom: 25px;
-            font-size: 0.9rem;
-            color: #666;
-            background: #f0f2f5;
-            padding: 8px 16px;
-            border-radius: 20px;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            color: #555;
+            background: #f1f3f6;
+            padding: 10px 20px;
+            border-radius: 30px;
             display: inline-block;
+            font-weight: bold;
         }
 
         /* --- Buttons --- */
@@ -74,41 +87,45 @@
 
         button {
             border: none;
-            border-radius: 16px;
-            padding: 18px;
-            font-size: 1.1rem;
+            border-radius: 20px;
+            padding: 22px 10px; /* 上下の余白を増やして押しやすく */
+            font-size: 1.3rem;  /* 文字を大きく */
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.1s ease;
             width: 100%;
             -webkit-tap-highlight-color: transparent;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
         }
 
         button:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
         }
 
         /* Google Login Button */
         .btn-google {
             background: #fff;
             color: #444;
-            border: 1px solid #ddd;
+            border: 2px solid #eee;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
+            font-size: 1.1rem;
+            padding: 20px;
         }
 
         /* Action Buttons */
         .btn-in {
             background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
             color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .btn-out {
             background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
             color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         button:disabled {
@@ -120,45 +137,34 @@
         /* --- Utils --- */
         .hidden { display: none !important; }
         
-        /* --- Toast Notification --- */
+        /* --- Toast Notification (見やすく) --- */
         #toast {
             visibility: hidden;
+            width: 80%; /* 幅を広げる */
             min-width: 250px;
-            background-color: #333;
+            background-color: rgba(40, 40, 40, 0.95);
             color: #fff;
             text-align: center;
             border-radius: 50px;
-            padding: 16px;
+            padding: 18px 20px;
             position: fixed;
-            z-index: 1;
+            z-index: 100;
             left: 50%;
-            bottom: 30px;
+            bottom: 40px;
             transform: translateX(-50%);
-            font-size: 0.9rem;
+            font-size: 1rem;
+            font-weight: bold;
             opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
         #toast.show {
             visibility: visible;
             opacity: 1;
-            bottom: 50px;
+            bottom: 60px; /* 少し上に浮き上がるアニメーション */
         }
         #toast.error { background-color: #e74c3c; }
         #toast.success { background-color: #2ecc71; }
-
-        /* Loader */
-        .spinner {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
     </style>
 </head>
@@ -167,12 +173,12 @@
     <div class="card">
         <h1>Attendance</h1>
         <div id="currentDate">--/-- (Sun)</div>
-        <div id="liveClock">00:00:00</div>
+        <div id="liveClock">00:00</div>
 
         <div id="loginSection">
-            <p style="color:#666; margin-bottom:20px;">社員認証を行ってください</p>
+            <p style="color:#666; margin-bottom:20px; font-size:1.1rem;">社員認証を行ってください</p>
             <button class="btn-google" onclick="login()">
-                <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.716H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.272C4.672 5.14 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+                <svg width="24" height="24" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.716H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.272C4.672 5.14 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
                 Googleでログイン
             </button>
         </div>
@@ -238,7 +244,8 @@
         // 時計機能
         function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            // 秒数表示を削除してシンプルに見やすく（お好みで秒も戻せます）
+            const timeString = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
             const dateString = now.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' });
             document.getElementById('liveClock').innerText = timeString;
             document.getElementById('currentDate').innerText = dateString;
