@@ -79,7 +79,7 @@
     // ▼▼▼ 追加：オフィスの設定（ステップ1で調べた数値をここに入れる） ▼▼▼
         const OFFICE_LAT = 35.71516;  // オフィスの緯度
         const OFFICE_LON = 139.76168; // オフィスの経度
-        const ALLOWED_DISTANCE = 50;   // 許容する半径（メートル）※GPS誤差を考慮して50m〜100m推奨
+        const ALLOWED_DISTANCE = 200;   // 許容する半径（メートル）※GPS誤差を考慮して50m〜100m推奨
     
         // 2点間の距離を計算する関数（ハーバースイン公式）
         function getDistance(lat1, lon1, lat2, lon2) {
